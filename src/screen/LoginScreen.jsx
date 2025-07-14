@@ -13,6 +13,9 @@ const LoginScreen =()=>{
     const handleGoBack = ()=>{
         navigation.goBack();
     };
+    const handleSignUp =()=>{
+     navigation.navigate("SIGNUP");
+    };
   return(
     <View style={styles.container}>
         <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGoBack}>
@@ -58,6 +61,7 @@ const LoginScreen =()=>{
                 <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.loginButtonWrapper}>
+
                 <Text style={styles.loginText}>Login</Text>
             </TouchableOpacity>
             <Text style={styles.continueText}>or continue with</Text>
@@ -67,7 +71,9 @@ const LoginScreen =()=>{
             </TouchableOpacity>
             <View style={styles.footerContainer}>
                 <Text style={styles.accountText}>Don't have an account?</Text>
-            <Text style={styles.signupText}>Sign up</Text>
+                <TouchableOpacity onPress={handleSignUp}>
+                    <Text style={styles.signupText}>Sign up</Text>
+                </TouchableOpacity>
             </View>
         </View>
     </View>
