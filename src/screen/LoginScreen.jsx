@@ -16,6 +16,9 @@ const LoginScreen =()=>{
     const handleSignUp =()=>{
      navigation.navigate("SIGNUP");
     };
+    const handleDashboard =()=>{
+        navigation.navigate("DASHBOARD");
+    };
   return(
     <View style={styles.container}>
         <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGoBack}>
@@ -60,7 +63,7 @@ const LoginScreen =()=>{
             <TouchableOpacity>
                 <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.loginButtonWrapper}>
+            <TouchableOpacity style={styles.loginButtonWrapper} onPress={handleDashboard}>
 
                 <Text style={styles.loginText}>Login</Text>
             </TouchableOpacity>
@@ -130,7 +133,7 @@ const styles = StyleSheet.create({
 
     },
     loginButtonWrapper:{
-    backgroundColor:colors.primary,
+    backgroundColor:colors.accent,
     borderRadius:100,
     marginTop:20,
 
@@ -154,7 +157,7 @@ const styles = StyleSheet.create({
     googleButtonContainer:{
         flexDirection: "row",
         borderWidth: 2,
-        borderColor: colors.primary,
+        borderColor: colors.accent,
         borderRadius: 100,
         justifyContent:"center",
         alignItems:"center",

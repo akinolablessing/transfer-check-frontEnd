@@ -9,7 +9,9 @@ import {colors} from "../utils/colors";
 import {fonts} from "../utils/fonts";
 import {useNavigation} from "@react-navigation/native";
 
-const SignupScreen =()=>{
+const SignupScreen =({ setUsername })=>{
+    const [name, setName] = useState('');
+
     const navigation = useNavigation();
     const [secureEntry, setSecureEntry] = useState(true);
     const handleGoBack = ()=>{
@@ -17,6 +19,16 @@ const SignupScreen =()=>{
     };
     const handleLogin =()=>{
         navigation.navigate("LOGIN");
+    };
+    const handleSubmit = () => {
+        if (name.trim() === '') {
+            alert('Please enter your name.');
+            return;
+        }
+
+        setUsername(name);
+
+        navigation.navigate('LOGIN');
     };
     return(
         <View style={styles.container}>
@@ -39,7 +51,9 @@ const SignupScreen =()=>{
                     <TextInput style={styles.textInput}
                                placeholder="Enter your username."
                                placeholderTextColor={colors.secondary}
-                               keyboardType="name-phone-pad"/>
+                               keyboardType="name-phone-pad"
+                               onChangeText={setName}
+                    />
                 </View>
                 <View style={styles.inputContainer}>
                     <AntDesign name={"phone"}
@@ -79,7 +93,7 @@ const SignupScreen =()=>{
                 {/*<TouchableOpacity>*/}
                 {/*    /!*<Text style={styles.forgotPasswordText}>Forgot Password?</Text>*!/*/}
                 {/*</TouchableOpacity>*/}
-                <TouchableOpacity style={styles.loginButtonWrapper}>
+                <TouchableOpacity style={styles.loginButtonWrapper} onPress={handleSubmit}>
                     <Text style={styles.loginText}>Sign up</Text>
                 </TouchableOpacity>
                 <Text style={styles.continueText}>or continue with</Text>
@@ -149,7 +163,7 @@ const styles = StyleSheet.create({
 
     },
     loginButtonWrapper:{
-        backgroundColor:colors.primary,
+        backgroundColor:colors.accent,
         borderRadius:100,
         marginTop:20,
 

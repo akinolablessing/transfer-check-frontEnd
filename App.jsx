@@ -1,26 +1,34 @@
 import {StyleSheet, Text, View} from 'react-native'
-import React from "react";
+import React, {useState} from "react";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import HomeScreen from "./src/screen/HomeScreen";
 import LoginScreen from "./src/screen/LoginScreen";
 import SignupScreen from "./src/screen/SignupScreen";
+import DashboardScreen from "./src/screen/DashboardScreen";
 
 
 const Stack = createNativeStackNavigator();
 
 const App =()=>{
+    const [username, setUsername] = useState('');
+
     return(
         <NavigationContainer>
             <Stack.Navigator screenOptions={{
                 headerShown:false,
             }}>
                 <Stack.Screen name={"HOME"}
-                              component={HomeScreen} />
+                              component={HomeScreen}
+                              />
                 <Stack.Screen name={"LOGIN"}
                               component={LoginScreen} />
-                <Stack.Screen name={"SIGNUP"}
-                              component={SignupScreen} />
+                <Stack.Screen name="SIGNUP">
+                    {(props) => <SignupScreen {...props} setUsername={setUsername} />}
+                </Stack.Screen>
+                <Stack.Screen name="DASHBOARD">
+                    {(props) => <DashboardScreen {...props} username={username} />}
+                </Stack.Screen>
             </Stack.Navigator>
         </NavigationContainer>
     )
@@ -31,36 +39,3 @@ const styles = StyleSheet.create({})
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import { StatusBar } from 'expo-status-bar';
-// import { StyleSheet, Text, View } from 'react-native';
-//
-// export default function App() {
-//   return (
-//     <View style={styles.container}>
-//       <Text>Open up App.jsx to start working on your app!</Text>
-//       <StatusBar style="auto" />
-//     </View>
-//   );
-// }
-//
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: '#fff',
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//   },
-// });

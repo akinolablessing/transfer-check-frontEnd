@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         width: "50%",
-        backgroundColor: colors.primary,
+        backgroundColor: colors.accent,
         borderRadius: 90,
     },
     loginButtonText:{
