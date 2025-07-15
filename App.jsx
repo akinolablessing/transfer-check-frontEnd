@@ -6,6 +6,7 @@ import HomeScreen from "./src/screen/HomeScreen";
 import LoginScreen from "./src/screen/LoginScreen";
 import SignupScreen from "./src/screen/SignupScreen";
 import DashboardScreen from "./src/screen/DashboardScreen";
+import QRCodeScannerScreen from "./src/screen/QRCodeScannerScreen";
 
 
 const Stack = createNativeStackNavigator();
@@ -29,6 +30,7 @@ const App =()=>{
                 <Stack.Screen name="DASHBOARD">
                     {(props) => <DashboardScreen {...props} username={username} />}
                 </Stack.Screen>
+                <Stack.Screen name="QRCODESCANNER" component={QRCodeScannerScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     )
