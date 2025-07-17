@@ -11,7 +11,6 @@ import { jwtDecode } from "jwt-decode";
 const DashboardScreen = () => {
     const navigation = useNavigation();
     const [decoded, setDecoded] = useState(null);
-    const [token, setToken] = useState("");
     const [loading, setLoading] = useState(true);
     const [successFullTransaction, setSuccessFullTransactions] = useState(0);
     const [unsuccessFullTransaction, setUnsuccessFullTransactions] = useState(0);
@@ -22,7 +21,6 @@ const DashboardScreen = () => {
                 if (token) {
                     const decodedToken = jwtDecode(token);
                     setDecoded(decodedToken);
-                    setToken(token);
                     await fetchSuccessfulTransactions(token);
                     await fetchUnsuccessfulTransactions(token);
                 } else {
@@ -74,7 +72,7 @@ const DashboardScreen = () => {
     };
 
     const handleScanning = () => {
-        console.log("Navigate to QR code scanner");
+        navigation.navigate("QRCODESCANNER")
     };
 
     if (loading) {
