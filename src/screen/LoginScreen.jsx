@@ -45,7 +45,7 @@ const LoginScreen =()=>{
 
             if (response.ok) {
                 console.log("Signup success:", data);
-                await SecureStore.setItemAsync("token", data.access_token);
+                // await SecureStore.setItemAsync("token", data.access_token);
                 navigation.navigate("LoginSuccessFul");
             } else {
                 alert(data.detail || "Signup failed");
