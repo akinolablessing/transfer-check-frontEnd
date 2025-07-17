@@ -14,6 +14,7 @@ const SignupScreen =({ setUsername })=>{
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
 
     const navigation = useNavigation();
     const [secureEntry, setSecureEntry] = useState(true);
@@ -25,7 +26,7 @@ const SignupScreen =({ setUsername })=>{
     };
     const handleSubmit = () => {
         if (name.trim() === '' || email.trim() === '' || password.trim() === '' || phone.trim() === '') {
-            alert('All fields are required.');
+            setErrorMessage('All fields are required. and space are  not allowed.');
             return;
         }
 
@@ -52,11 +53,11 @@ const SignupScreen =({ setUsername })=>{
                 alert("Signup success!");
                 navigation.navigate("LOGIN");
             } else {
-                alert(data.detail || "Signup failed");
+                setErrorMessage(data.detail);
             }
         } catch (error) {
             console.error("Signup error:", error);
-            alert(error);
+            setErrorMessage(error);
         }
     };
 
@@ -83,7 +84,10 @@ const SignupScreen =({ setUsername })=>{
                                placeholder="Enter your username."
                                placeholderTextColor={colors.secondary}
                                keyboardType="name-phone-pad"
-                               onChangeText={setName}
+                               onChangeText={(text) => {
+                                   setName(text);
+                                   setErrorMessage('');
+                               }}
                                value={name}
 
                     />
@@ -96,8 +100,11 @@ const SignupScreen =({ setUsername })=>{
                                placeholder="Enter your phoneNumber."
                                placeholderTextColor={colors.secondary}
                                keyboardType="number-pad"
+                               onChangeText={(text) => {
+                                   setPhone(text);
+                                   setErrorMessage('');
+                               }}
                                value={phone}
-                               onChangeText={setPhone}
                     />
                 </View>
                 <View style={styles.inputContainer}>
@@ -108,8 +115,11 @@ const SignupScreen =({ setUsername })=>{
                                placeholder="Enter your email."
                                placeholderTextColor={colors.secondary}
                                keyboardType="email-address"
+                               onChangeText={(text) => {
+                                   setEmail(text);
+                                   setErrorMessage('');
+                               }}
                                value={email}
-                               onChangeText={setEmail}
                     />
                 </View>
                 <View style={styles.inputContainer}>
@@ -135,6 +145,7 @@ const SignupScreen =({ setUsername })=>{
                         />
                     </TouchableOpacity>
                 </View>
+                {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
                 {/*<TouchableOpacity>*/}
                 {/*    /!*<Text style={styles.forgotPasswordText}>Forgot Password?</Text>*!/*/}
                 {/*</TouchableOpacity>*/}
@@ -175,6 +186,14 @@ const styles = StyleSheet.create({
     textContainer:{
         marginVertical:20,
 
+    },
+    errorText: {
+        color: "#FF3B30",
+        marginLeft: 10,
+        marginTop: -5,
+        marginBottom: 5,
+        fontSize: 12,
+        fontFamily: fonts.Light
     },
     headingText:{
         fontSize:32,
