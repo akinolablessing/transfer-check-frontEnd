@@ -1,8 +1,9 @@
 import React, {useState} from "react";
+import * as SecureStore from 'expo-secure-store';
 import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native'
 import Ionicons from "react-native-vector-icons/Ionicons"
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons"
-
+import loginSuccessFul from "./LoginSuccessFul";
 import {colors} from "../utils/colors";
 import {fonts} from "../utils/fonts";
 import {useNavigation} from "@react-navigation/native";
@@ -13,6 +14,7 @@ const LoginScreen =()=>{
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [secureEntry, setSecureEntry] = useState(true);
+    const [errorMessage, setErrorMessage] = useState("");
     const handleGoBack = ()=>{
         navigation.goBack();
     };
@@ -22,7 +24,7 @@ const LoginScreen =()=>{
 
     const handleDashboard  = () => {
         if (email.trim() === '' || password.trim() === '') {
-            alert('All fields are required.');
+            setErrorMessage('All fields are required.');
             return;
         }
         login();
@@ -43,8 +45,8 @@ const LoginScreen =()=>{
 
             if (response.ok) {
                 console.log("Signup success:", data);
-                alert("Signup success!");
-                navigation.navigate("DASHBOARD");
+                await SecureStore.setItemAsync("token", data.access_token);
+                navigation.navigate("LoginSuccessFul");
             } else {
                 alert(data.detail || "Signup failed");
             }
@@ -100,6 +102,7 @@ const LoginScreen =()=>{
                                      color={colors.secondary}/>
                 </TouchableOpacity>
             </View>
+            {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
             <TouchableOpacity>
                 <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
             </TouchableOpacity>
@@ -136,6 +139,14 @@ const styles = StyleSheet.create({
         borderRadius:20,
         justifyContent: "center",
         alignItems: "center",
+    },
+    errorText: {
+        color: "#FF3B30",
+        marginLeft: 10,
+        marginTop: -5,
+        marginBottom: 5,
+        fontSize: 12,
+        fontFamily: fonts.Light
     },
     textContainer:{
         marginVertical:20,

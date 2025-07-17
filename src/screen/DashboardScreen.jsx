@@ -1,6 +1,5 @@
-
-
 import React from 'react';
+import * as SecureStore from 'expo-secure-store';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { colors } from '../utils/colors';
 import StatCard from '../components/StatCard';
@@ -11,8 +10,23 @@ import {useNavigation} from "@react-navigation/native";
 const DashboardScreen = ({ username }) => {
     const navigation = useNavigation();
 
+
     const handleScanning =()=>{
         navigation.navigate("QRCODESCANNER")
+    }
+
+    const scanImage = async (data)=>{
+        const token = await SecureStore.getItemAsync('token');
+        try{
+            const response  = await fetch("http://localhost:8000/api//submit/image", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                }
+            })
+        }catch (error) {
+            console.log(error);
+        }
     }
     return (
         <ScrollView style={styles.container}>
