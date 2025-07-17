@@ -9,6 +9,9 @@ import {useNavigation} from "@react-navigation/native";
 
 const LoginScreen =()=>{
     const navigation = useNavigation();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [secureEntry, setSecureEntry] = useState(true);
     const handleGoBack = ()=>{
         navigation.goBack();
@@ -16,8 +19,39 @@ const LoginScreen =()=>{
     const handleSignUp =()=>{
      navigation.navigate("SIGNUP");
     };
-    const handleDashboard =()=>{
-        navigation.navigate("DASHBOARD");
+
+    const handleDashboard  = () => {
+        if (email.trim() === '' || password.trim() === '') {
+            alert('All fields are required.');
+            return;
+        }
+        login();
+    };
+    const login = async () => {
+        try {
+            const response = await fetch("http://localhost:8000/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log("Signup success:", data);
+                alert("Signup success!");
+                navigation.navigate("DASHBOARD");
+            } else {
+                alert(data.detail || "Signup failed");
+            }
+        } catch (error) {
+            console.error("Signup error:", error);
+            alert(error);
+        }
     };
   return(
     <View style={styles.container}>
@@ -41,7 +75,10 @@ const LoginScreen =()=>{
             <TextInput style={styles.textInput}
             placeholder="Enter your email."
             placeholderTextColor={colors.secondary}
-            keyboardType="email-address"/>
+            keyboardType="email-address"
+            onChangeText={setEmail}
+             value={email}
+            />
         </View>
             <View style={styles.inputContainer}>
                 <SimpleLineIcons name={"lock"}
@@ -50,7 +87,10 @@ const LoginScreen =()=>{
                 <TextInput style={styles.textInput}
                            placeholder="Enter your password."
                            placeholderTextColor={colors.secondary}
-                           secureTextEntry={secureEntry}/>
+                           secureTextEntry={secureEntry}
+                           onChangeText={setPassword}
+                           value={password}
+                />
                 <TouchableOpacity
                 onPress={()=>{
                     setSecureEntry((prev) =>!prev);
