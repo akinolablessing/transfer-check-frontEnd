@@ -11,6 +11,9 @@ import {useNavigation} from "@react-navigation/native";
 
 const SignupScreen =({ setUsername })=>{
     const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [phone, setPhone] = useState('');
+    const [password, setPassword] = useState('');
 
     const navigation = useNavigation();
     const [secureEntry, setSecureEntry] = useState(true);
@@ -21,16 +24,44 @@ const SignupScreen =({ setUsername })=>{
         navigation.navigate("LOGIN");
     };
     const handleSubmit = () => {
-        if (name.trim() === '') {
-            alert('Please enter your name.');
+        if (name.trim() === '' || email.trim() === '' || password.trim() === '' || phone.trim() === '') {
+            alert('All fields are required.');
             return;
         }
 
         setUsername(name);
-
-        navigation.navigate('LOGIN');
+        signup();
     };
-    return(
+    const signup = async () => {
+        try {
+            const response = await fetch("http://localhost:8000/api/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name:name,
+                    email: email,
+                    password: password,
+                    phone:phone,
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                console.log("Signup success:", data);
+                alert("Signup success!");
+                navigation.navigate("LOGIN");
+            } else {
+                alert(data.detail || "Signup failed");
+            }
+        } catch (error) {
+            console.error("Signup error:", error);
+            alert(error);
+        }
+    };
+
+
+            return(
         <View style={styles.container}>
             <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGoBack}>
                 <Ionicons name={"arrow-back-outline"}
@@ -53,6 +84,8 @@ const SignupScreen =({ setUsername })=>{
                                placeholderTextColor={colors.secondary}
                                keyboardType="name-phone-pad"
                                onChangeText={setName}
+                               value={name}
+
                     />
                 </View>
                 <View style={styles.inputContainer}>
@@ -62,7 +95,10 @@ const SignupScreen =({ setUsername })=>{
                     <TextInput style={styles.textInput}
                                placeholder="Enter your phoneNumber."
                                placeholderTextColor={colors.secondary}
-                               keyboardType="number-pad"/>
+                               keyboardType="number-pad"
+                               value={phone}
+                               onChangeText={setPhone}
+                    />
                 </View>
                 <View style={styles.inputContainer}>
                     <Ionicons name={"mail-outline"}
@@ -71,7 +107,10 @@ const SignupScreen =({ setUsername })=>{
                     <TextInput style={styles.textInput}
                                placeholder="Enter your email."
                                placeholderTextColor={colors.secondary}
-                               keyboardType="email-address"/>
+                               keyboardType="email-address"
+                               value={email}
+                               onChangeText={setEmail}
+                    />
                 </View>
                 <View style={styles.inputContainer}>
                     <SimpleLineIcons name={"lock"}
@@ -80,14 +119,20 @@ const SignupScreen =({ setUsername })=>{
                     <TextInput style={styles.textInput}
                                placeholder="Enter your password."
                                placeholderTextColor={colors.secondary}
-                               secureTextEntry={secureEntry}/>
+                               secureTextEntry={secureEntry}
+                               value={password}
+                               onChangeText={setPassword}
+                    />
                     <TouchableOpacity
                         onPress={()=>{
                             setSecureEntry((prev) =>!prev);
                         }}>
                         <SimpleLineIcons name={"eye"}
                                          size={20}
-                                         color={colors.secondary}/>
+                                         color={colors.secondary}
+
+
+                        />
                     </TouchableOpacity>
                 </View>
                 {/*<TouchableOpacity>*/}
