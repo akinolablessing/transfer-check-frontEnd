@@ -8,8 +8,9 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 import {colors} from "../utils/colors";
 import {fonts} from "../utils/fonts";
 import {useNavigation} from "@react-navigation/native";
+import * as SecureStore from "expo-secure-store";
 
-const SignupScreen =({ setUsername })=>{
+const SignupScreen =()=>{
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
@@ -30,12 +31,12 @@ const SignupScreen =({ setUsername })=>{
             return;
         }
 
-        setUsername(name);
+        setName(name);
         signup();
     };
     const signup = async () => {
         try {
-            const response = await fetch("http://localhost:8000/api/register", {
+            const response = await fetch("https://transfer-check-backend.onrender.com/api/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
@@ -50,15 +51,16 @@ const SignupScreen =({ setUsername })=>{
 
             if (response.ok) {
                 console.log("Signup success:", data);
+                await SecureStore.setItemAsync("token", data.access_token);
                 alert("Signup success!");
-                navigation.navigate("LOGIN");
+                navigation.navigate("DASHBOARD");
             } else {
                 setErrorMessage(data.detail);
             }
         } catch (error) {
-            console.error("Signup error:", error);
-            setErrorMessage(error);
+            alert(error)
         }
+
     };
 
 

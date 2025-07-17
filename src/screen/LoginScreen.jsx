@@ -6,7 +6,7 @@ import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons"
 import loginSuccessFul from "./LoginSuccessFul";
 import {colors} from "../utils/colors";
 import {fonts} from "../utils/fonts";
-import {useNavigation} from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 const LoginScreen =()=>{
     const navigation = useNavigation();
@@ -31,7 +31,7 @@ const LoginScreen =()=>{
     };
     const login = async () => {
         try {
-            const response = await fetch("http://localhost:8000/api/login", {
+            const response = await fetch("https://transfer-check-backend.onrender.com/api/login", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
