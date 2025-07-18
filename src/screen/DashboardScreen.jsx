@@ -117,6 +117,7 @@ const DashboardScreen = () => {
                     borderColor="#f87171"
                     changeText={unsuccessFullTransaction === 0 ? null :"+12.5% from last month"}
                     changeColor="#b91c1c"
+                    style={{width:"100%"}}
                 />
             </View>
 
@@ -124,14 +125,14 @@ const DashboardScreen = () => {
                 <ActionCard
                     icon="photo-camera"
                     title="Scan Receipt"
-                    subtitle="Upload and analyze payment receipts"
+                    subtitle="scan and analyze payment receipts"
                     onPress={handleScanning}
                 />
                 <ActionCard
-                    icon="admin-panel-settings"
-                    title="View Admin Panel"
-                    subtitle="Monitor flagged transactions"
-                    onPress={() => console.log('View Admin Panel')}
+                    icon="photo-camera"
+                    title="Upload Receipt"
+                    subtitle="Upload and analyze payment receipts"
+
                 />
             </View>
 
@@ -146,6 +147,7 @@ export default DashboardScreen;
 
 const styles = StyleSheet.create({
     container: {
+        marginVertical: 75,
         flex: 1,
         padding: 20,
         backgroundColor: colors.white,
