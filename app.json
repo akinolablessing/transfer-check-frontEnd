@@ -26,7 +26,13 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
+<<<<<<< Updated upstream
       "expo-secure-store"
+=======
+      "expo-barcode-scanner",
+      "expo-secure-store",
+      "expo-web-browser"
+>>>>>>> Stashed changes
     ]
   }
 }
