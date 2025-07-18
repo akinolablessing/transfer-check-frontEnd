@@ -1,10 +1,12 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Camera } from 'expo-camera';
+import React, { useRef, useState, useEffect } from 'react';
+import { View, Button, Alert } from 'react-native';
+import * as SecureStore from "expo-secure-store";
 
 const QRCodeScannerScreen = () => {
-    const cameraRef = useRef(null);
+    console.log(Camera)
     const [hasPermission, setHasPermission] = useState(null);
+    const cameraRef = useRef(null);
 
     useEffect(() => {
         (async () => {
@@ -13,45 +15,51 @@ const QRCodeScannerScreen = () => {
         })();
     }, []);
 
-    const takePicture = async () => {
+    const takePhoto = async () => {
         if (cameraRef.current) {
-            const photo = await cameraRef.current.takePictureAsync();
-            console.log("Photo taken:", photo.uri);
+            const photo = await cameraRef.current.takePictureAsync({ base64: true });
+            sendToBackend(photo);
         }
     };
 
-    if (hasPermission === null) return <View><Text>Requesting camera permission...</Text></View>;
-    if (hasPermission === false) return <View><Text>No access to camera</Text></View>;
+    const sendToBackend = async (photo) => {
+        const formData = new FormData();
+        formData.append('file', {
+            uri: photo.uri,
+            name: 'receipt.jpg',
+            type: 'image/jpeg',
+        });
+
+        try {
+            const token = await SecureStore.getItemAsync("token");
+
+            const res = await fetch('https://transfer-check-backend.onrender.com/api/submit/image', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'multipart/form-data',
+                },
+                body: formData,
+            });
+
+            const data = await res.json();
+            console.log('Response:', data);
+        } catch (err) {
+            console.log(err);
+            Alert.alert("Error", "Failed to send image");
+        }
+    };
+
+    if (hasPermission === false) {
+        return <Text>No access to camera</Text>;
+    }
 
     return (
-        <View style={styles.container}>
-            <Camera ref={cameraRef} style={styles.camera} />
-            <TouchableOpacity style={styles.button} onPress={takePicture}>
-                <Text style={styles.buttonText}>📷 Take Photo</Text>
-            </TouchableOpacity>
+        <View style={{ flex: 1 }}>
+            <Camera ref={cameraRef} style={{ flex: 1 }} />
+            <Button title="Snap & Send" onPress={takePhoto} />
         </View>
     );
 };
 
 export default QRCodeScannerScreen;
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    camera: {
-        flex: 1,
-    },
-    button: {
-        position: 'absolute',
-        bottom: 30,
-        alignSelf: 'center',
-        backgroundColor: '#007bff',
-        padding: 15,
-        borderRadius: 10,
-    },
-    buttonText: {
-        color: 'white',
-        fontSize: 16,
-    },
-});
