@@ -51,7 +51,7 @@ const SignupScreen =({ setUsername })=>{
             if (response.ok) {
                 console.log("Signup success:", data);
                 alert("Signup success!");
-                navigation.navigate("LOGIN");
+                navigation.navigate("DASHBOARD");
             } else {
                 setErrorMessage(data.detail);
             }
