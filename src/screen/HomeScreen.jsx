@@ -83,6 +83,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        marginVertical: 100,
         backgroundColor: colors.white,
         alignItems: "center",
     },

@@ -128,6 +128,7 @@ const LoginScreen =()=>{
 export default LoginScreen
 const styles = StyleSheet.create({
     container:{
+        marginVertical: 100,
         flex:1,
         backgroundColor: colors.white,
         padding:20,
