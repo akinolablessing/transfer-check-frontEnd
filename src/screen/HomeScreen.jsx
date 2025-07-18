@@ -22,7 +22,7 @@ const HomeScreen = () => {
             <Animatable.Image
                 animation="fadeInDown"
                 duration={1200}
-                source={require("../assets/logo.png")}
+                source={require("../assets/img.png")}
                 style={styles.logo}
             />
 
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     },
     logo: {
         height: 40,
-        width: 140,
+        width: 290,
         marginVertical: 30,
     },
     bannerImage: {

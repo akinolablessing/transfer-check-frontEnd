@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native'
+import {ActivityIndicator, Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native'
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -16,7 +16,7 @@ const SignupScreen =()=>{
     const [phone, setPhone] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-
+    const [isLoading, setIsLoading] = useState(false);
     const navigation = useNavigation();
     const [secureEntry, setSecureEntry] = useState(true);
     const handleGoBack = ()=>{
@@ -25,15 +25,22 @@ const SignupScreen =()=>{
     const handleLogin =()=>{
         navigation.navigate("LOGIN");
     };
-    const handleSubmit = () => {
+    const handleSubmit = async () => {
         if (name.trim() === '' || email.trim() === '' || password.trim() === '' || phone.trim() === '') {
-            setErrorMessage('All fields are required. and space are  not allowed.');
+            setErrorMessage('All fields are required. Spaces are not allowed.');
             return;
         }
-
-        setName(name);
-        signup();
+        setIsLoading(true);
+        try {
+            await signup();
+        } catch (error) {
+            console.error(error);
+            alert(error.details);
+        } finally {
+            setIsLoading(false);
+        }
     };
+
     const signup = async () => {
         try {
             const response = await fetch("https://transfer-check-backend.onrender.com/api/register", {
@@ -64,7 +71,7 @@ const SignupScreen =()=>{
     };
 
 
-            return(
+    return(
         <View style={styles.container}>
             <TouchableOpacity style={styles.backButtonWrapper} onPress={handleGoBack}>
                 <Ionicons name={"arrow-back-outline"}
@@ -80,8 +87,8 @@ const SignupScreen =()=>{
             <View style={styles.formContainer}>
                 <View style={styles.inputContainer}>
                     <MaterialCommunityIcons name={"rename-outline"}
-                              size={30}
-                              color={colors.secondary}/>
+                                            size={30}
+                                            color={colors.secondary}/>
                     <TextInput style={styles.textInput}
                                placeholder="Enter your username."
                                placeholderTextColor={colors.secondary}
@@ -96,8 +103,8 @@ const SignupScreen =()=>{
                 </View>
                 <View style={styles.inputContainer}>
                     <AntDesign name={"phone"}
-                              size={30}
-                              color={colors.secondary}/>
+                               size={30}
+                               color={colors.secondary}/>
                     <TextInput style={styles.textInput}
                                placeholder="Enter your phoneNumber."
                                placeholderTextColor={colors.secondary}
@@ -148,12 +155,17 @@ const SignupScreen =()=>{
                     </TouchableOpacity>
                 </View>
                 {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
-                {/*<TouchableOpacity>*/}
-                {/*    /!*<Text style={styles.forgotPasswordText}>Forgot Password?</Text>*!/*/}
-                {/*</TouchableOpacity>*/}
-                <TouchableOpacity style={styles.loginButtonWrapper} onPress={handleSubmit}>
-                    <Text style={styles.loginText}>Sign up</Text>
+                <TouchableOpacity
+                    style={[styles.loginButtonWrapper, isLoading && styles.disabledButton, { flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }]}
+                    onPress={handleSubmit}
+                    disabled={isLoading}
+                >
+                    {isLoading && <ActivityIndicator color="#fff" style={{ marginRight: 8 }} />}
+                    <Text style={styles.loginText}>
+                        {isLoading ? 'Signing up...' : 'Sign up'}
+                    </Text>
                 </TouchableOpacity>
+
                 <Text style={styles.continueText}>or continue with</Text>
                 <TouchableOpacity style={styles.googleButtonContainer}>
                     <Image source={require("../assets/google.png")} style={styles.googleImage}/>
