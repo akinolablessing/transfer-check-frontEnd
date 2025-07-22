@@ -75,6 +75,10 @@ const DashboardScreen = () => {
         navigation.navigate("QRCODESCANNER")
     };
 
+    const imagePicker = () => {
+        navigation.navigate("ImagePicker")
+    }
+
     if (loading) {
         return (
             <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
@@ -132,7 +136,7 @@ const DashboardScreen = () => {
                     icon="photo-camera"
                     title="Upload Receipt"
                     subtitle="Upload and analyze payment receipts"
-
+                    onPress={imagePicker}
                 />
             </View>
 
