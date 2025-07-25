@@ -69,7 +69,7 @@ const ImageSelector = () => {
 
     return (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Button title="Pick Image from Gallery" onPress={pickImage} />
+            <Button title="Choose from Gallery" onPress={pickImage} />
             {imageUri && (
                 <>
                     <Image source={{ uri: imageUri }} style={{ width: 300, height: 300, marginTop: 20 }} />
