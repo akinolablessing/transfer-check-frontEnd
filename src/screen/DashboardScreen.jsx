@@ -107,19 +107,19 @@ const DashboardScreen = () => {
                     iconColor="#0f0f0f"
                     bgColor="#e0f2fe"
                     borderColor="#38bdf8"
-                    changeText={successFullTransaction === 0 ? null :"+12.5% from last month"}
+                    changeText={successFullTransaction === 0 ? null :`${successFullTransaction}`}
                     changeColor="#16a34a"
                 />
                 <StatCard
                     title="Fraud Detected"
                     value={unsuccessFullTransaction === 0
                         ? "You don't have any transactions yet."
-                        : "Monitor and verify transactions to protect against fraud."}
+                        : `Monitor and verify transactions to protect against fraud.`}
                     icon="close"
                     iconColor="#7f1d1d"
                     bgColor="#fee2e2"
                     borderColor="#f87171"
-                    changeText={unsuccessFullTransaction === 0 ? null :"+12.5% from last month"}
+                    changeText={unsuccessFullTransaction === 0 ? null :`${unsuccessFullTransaction}`}
                     changeColor="#b91c1c"
                     style={{width:"100%"}}
                 />

@@ -4,30 +4,30 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as SecureStore from 'expo-secure-store';
-import MlkitOcr from 'react-native-mlkit-ocr';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 export default function QRCodeScannerScreen({ navigation }) {
     const [image, setImage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    
     const fetchWithRetry = async (url, options, retries = 1, timeout = 15000) => {
         try {
-            console.log(`Attempting upload (timeout: ${timeout}ms)...`);
+            console.log(`Attempting fetch (timeout ${timeout}ms)...`);
             return await Promise.race([
                 fetch(url, options),
-                new Promise((_, reject) => setTimeout(() => reject(new Error('Request timed out')), timeout))
+                new Promise((_, reject) =>
+                    setTimeout(() => reject(new Error('Request timed out')), timeout)
+                )
             ]);
         } catch (err) {
             if (retries > 0) {
-                console.log("Request failed, retrying with extended timeout...");
+                console.log("Request failed, retrying with longer timeout...");
                 Alert.alert("Waking up server...", "Please wait, the server is starting.");
-                return fetchWithRetry(url, options, retries - 1, 60000);
+                return fetchWithRetry(url, options, retries - 1, 70000);
             }
             throw err;
         }
     };
-
 
     const takePhoto = async () => {
         const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
@@ -35,24 +35,22 @@ export default function QRCodeScannerScreen({ navigation }) {
             Alert.alert('Permission Required', 'Please allow access to camera');
             return;
         }
-        const result = await ImagePicker.launchCameraAsync({ allowsEditing: true, aspect: [4, 3], quality: 1 });
-        if (!result.canceled) setImage(result.assets[0].uri);
-    };
 
+        const result = await ImagePicker.launchCameraAsync({
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.6,
+        });
 
-    const detectReceipt = async (imageUri) => {
-        try {
-            const result = await MlkitOcr.detectFromFile(imageUri);
-            if (!result || result.length === 0) return false;
-            const text = result.map(block => block.text).join(' ').toLowerCase();
-            const keywords = ['amount', 'transaction', 'ref', 'bank', 'account', 'paid'];
-            return keywords.some(k => text.includes(k));
-        } catch (err) {
-            console.log("OCR error:", err);
-            return false;
+        if (!result.canceled) {
+            const compressed = await ImageManipulator.manipulateAsync(
+                result.assets[0].uri,
+                [{ resize: { width: 1000 } }],
+                { compress: 0.5, format: ImageManipulator.SaveFormat.JPEG }
+            );
+            setImage(compressed.uri);
         }
     };
-
 
     const handleSubmit = async () => {
         if (!image) {
@@ -61,14 +59,7 @@ export default function QRCodeScannerScreen({ navigation }) {
         }
 
         setIsLoading(true);
-        console.log("Preparing to upload:", image);
-
-        const isReceipt = await detectReceipt(image);
-        if (isReceipt) {
-            setIsLoading(false);
-            Alert.alert('Invalid Image', 'Please upload a valid photo, not a transaction receipt.');
-            return;
-        }
+        console.log("Preparing to upload image:", image);
 
         try {
             const token = await SecureStore.getItemAsync('token');
@@ -80,23 +71,35 @@ export default function QRCodeScannerScreen({ navigation }) {
             }
 
             const formData = new FormData();
-            formData.append('image', { uri: image, type: 'image/jpeg', name: 'photo.jpg' });
+            formData.append('image', {
+                uri: image,
+                type: 'image/jpeg',
+                name: 'receipt.jpg',
+            });
+
+            console.log("Calling backend...");
 
             const response = await fetchWithRetry(
-                "https://transfer-check-backend.onrender.com/submit/image",
-                { method: "POST", headers: { Authorization: `Bearer ${token}` }, body: formData },
-                1
+                "https://transfer-check-backend.onrender.com/api/submit/image",
+                {
+                    method: "POST",
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                    body: formData
+                },
+                1,
+                15000
             );
 
             const data = await response.json();
-            console.log("Server Response:", data);
             setIsLoading(false);
 
             if (!response.ok) {
-                Alert.alert('Upload Failed', data?.detail || 'Something went wrong');
+                navigation.navigate("MoneyAvailable", { status: "failed" });
             } else {
-                Alert.alert('Success', 'Your image has been uploaded successfully');
                 setImage(null);
+                navigation.navigate("MoneyAvailable", { status: "success" });
             }
 
         } catch (error) {
@@ -119,7 +122,10 @@ export default function QRCodeScannerScreen({ navigation }) {
                 onPress={handleSubmit}
                 disabled={isLoading}
             >
-                {isLoading ? <ActivityIndicator color="#fff" /> : <Text style={styles.submitText}>Submit Image for Check</Text>}
+                {isLoading
+                    ? <ActivityIndicator color="#fff" />
+                    : <Text style={styles.submitText}>Submit Image for Check</Text>
+                }
             </TouchableOpacity>
         </View>
     );
